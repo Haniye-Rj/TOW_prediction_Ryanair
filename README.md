@@ -1,3 +1,5 @@
+Intro:
+
 The dataset contains 29,731 rows and 14 columns of real historical data from Ryanair. The goal is to predict the aircraft's takeoff weight, which is an important factor for estimating operational parameters such as fuel consumption and pricing. Note that the data is somewhat dated, which may impact certain estimations, but it still provides valuable insights for modeling and analysis.
 
 The dataset has been uploaded to this repository along with all the necessary libraries and dependencies required to run the analysis and modeling.
