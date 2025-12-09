@@ -82,10 +82,3 @@ The **Neural Network** model demonstrated the best performance, achieving the **
 The final, best-performing model (the **Neural Network**) was used to generate predictions for **ActualTOW** on a separate, cleaned, and prepared validation dataset, confirming its generalization ability.
 
 ---
-
-## 💻 How to Run This Project
-
-1.  Clone this repository: `git clone [Your-Repo-Link]`
-2.  Navigate to the project directory: `cd [Your-Repo-Name]`
-3.  Install the required dependencies: `pip install -r requirements.txt` (Update this command if you don't use a requirements file).
-4.  Run the main analysis notebook or script: `jupyter notebook prediction_notebook.ipynb` (Replace with your actual file name).
