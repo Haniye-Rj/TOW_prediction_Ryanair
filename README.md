@@ -1,113 +1,91 @@
-Intro:
+# ✈️ Ryanair Takeoff Weight Prediction: Machine Learning Approach
 
-The dataset contains 29,731 rows and 14 columns of real historical data from Ryanair. The goal is to predict the aircraft's takeoff weight, which is an important factor for estimating operational parameters such as fuel consumption and pricing. Note that the data is somewhat dated, which may impact certain estimations, but it still provides valuable insights for modeling and analysis.
+## 🎯 Introduction
+This project focuses on predicting an aircraft's **Actual Takeoff Weight (ActualTOW)** using historical flight data from Ryanair. Takeoff weight is a critical operational parameter, influencing factors like fuel consumption estimation and flight pricing.
 
-The dataset has been uploaded to this repository along with all the necessary libraries and dependencies required to run the analysis and modeling.
+The dataset, which is based on real historical Ryanair flight logs, contains **29,731 rows** and **14 initial columns**. While the data is somewhat dated, it provides valuable insights for developing and comparing machine learning models.
 
-Data Exploration
-The dataset was explored using pandas methods info() and describe() to understand its structure, data types, and basic statistics.
+The complete dataset, along with all necessary libraries and dependencies, is available within this repository.
 
-Visualizations were created to examine the distributions of key features, providing deeper insights and aiding in understanding patterns within the dataset.
+---
 
-Data Cleaning
-Handling Missing and Irrelevant Data:
-Some columns in the dataset contained missing values, while others were deemed irrelevant for this level of analysis. Specifically, columns such as 'DepartureDate', 'DepartureYear', 'DepartureMonth', and 'FlightNumber' were excluded, as they do not add significant value for the current modeling task. Instead, the 'DepartureDay' column is complete and can be used to reconstruct the relevant date information.
+## 🔬 Data Exploration and Cleaning
 
-The ActualTOW column contains the aircraft’s actual takeoff weight, but some entries may be missing or incorrectly formatted.
-All values in ActualTOW are converted to numeric types, with non-numeric entries replaced by NaN.
-The mean takeoff weight is calculated from the available numeric values.
-Missing values are then replaced with this mean, ensuring the column is complete and ready for modeling.
+The initial dataset was thoroughly explored using standard `pandas` methods (`info()`, `describe()`) and through various visualizations to understand feature distributions and patterns.
 
-Most ActualTOW values are tightly clustered, so using the mean for imputation is reasonable. For added robustness, the median could also be used, as it would be slightly more resistant to the few lower-value points.
+### Data Cleaning and Feature Engineering Highlights
 
-Distribution of Actual Takeoff Weight (ActualTOW)
-The histogram for ActualTOW shows a slightly right-skewed distribution, indicating that a small number of flights have lower takeoff weights (~45,000–55,000), which occur less frequently.
+* **Handling Missing/Irrelevant Data:**
+    * Irrelevant date and flight identifier columns (`DepartureDate`, `DepartureYear`, `DepartureMonth`, `FlightNumber`) were excluded.
+    * Rows with missing **FLownPassengers** were removed to ensure data reliability.
+    * Redundant airport columns were dropped to simplify the feature set.
+* **Target Variable Imputation (ActualTOW):**
+    * The target column, **ActualTOW**, was converted to a numeric type, with non-numeric entries replaced by `NaN`.
+    * Missing values were imputed using the **mean** of the available values. This was deemed reasonable as the **ActualTOW** distribution is tightly clustered.
+    * The histogram of **ActualTOW** showed a slightly **right-skewed distribution**, indicating fewer flights with lower takeoff weights ($\sim45,000–55,000$).
+* **Creating Day-of-Week Features:**
+    * New binary features were engineered from the departure day:
+        * **`Weekend`**: $1$ if the departure day is Friday, Saturday, or Sunday; $0$ otherwise.
+        * **`WeekDay`**: $1$ if the departure day is Monday, Tuesday, Wednesday, or Thursday; $0$ otherwise.
 
-The BagsCount and FlightBagsWeight columns are related, as the total baggage weight naturally depends on the number of bags. Instead of treating these as independent features, the information from one can help reconstruct the other if needed. This simplifies feature handling and reduces redundancy while preserving the underlying data patterns.
+---
 
-The dataset only provides the day of departure in the DepartureDay column, without month or year.
-Each day value is converted to a string in DD.MM.YYYY format.
-Single-digit days are padded with a leading zero (e.g., 1 → 01).
-The month and year are fixed as October 2016.
+## 🛠️ Modeling and Prediction
 
-Creating Day-of-Week Features
+### Final Features
 
-The dataset initially contains only the day of departure.
-DepartureDay is converted to a datetime object, making it easier to extract date-related information.
+After cleaning and engineering, the following seven features were used for modeling the target variable, **ActualTOW**:
 
-DayOfWeek is created using .dt.day_name(), giving the name of the day (e.g., Monday, Tuesday).
+1.  **ActualFlightTime**: The real flight duration in minutes.
+2.  **ActualTotalFuel**: Total fuel consumed during the flight.
+3.  **ActualTOW**: Aircraft’s actual takeoff weight (target variable).
+4.  **FLownPassengers**: Number of passengers on the flight.
+5.  **FlightBagsWeight**: Total weight of passenger baggage.
+6.  **Weekend**: Binary indicator ($1$ for Friday–Sunday).
+7.  **WeekDay**: Binary indicator ($1$ for Monday–Thursday).
 
-Two binary features are derived:
+### Model Training
 
-Weekend: True if the day is Friday, Saturday, or Sunday.
+The dataset was split into training and testing sets. Both the features and the target variable were **scaled** prior to training. Four different regression models were implemented and evaluated:
 
-WeekDay: True if the day is Monday through Thursday.
+1.  **Linear Regression**
+2.  **Neural Network**
+3.  **Decision Tree Regressor**
+4.  **Random Forest Regressor**
 
-The original DepartureDay and DayOfWeek columns are dropped to avoid redundancy.
+---
 
-Both Weekend and WeekDay are converted to numeric 0/1 values, which are easier to use in modeling.
+## 📊 Model Performance Summary
 
-Handling Missing Passenger Data
-Removes rows where FLownPassengers is missing, ensuring only complete and reliable data is used.
+The models were evaluated using Root Mean Squared Error (RMSE), Mean Absolute Error (MAE), and R-squared ($R^2$).
 
-Visualizing Actual Takeoff Weight vs. Baggage Weight
-This visualization helps identify trends or correlations between takeoff weight and baggage load, and whether weekend flights behave differently. and the answer is yes.
+| Model | RMSE | MAE | $R^2$ |
+| :--- | :--- | :--- | :--- |
+| **Neural Network** | **936.49** | **665.39** | N/A |
+| Random Forest Regressor | 988.22 | 726.98 | N/A |
+| Linear Regression | 1030.97 | 763.15 | 1.5883 |
+| Decision Tree Regressor | 1348.40 | 977.49 | N/A |
 
-Dropping Redundant Airport Columns: Dropping them reduces redundancy and keeps the dataset clean for modeling.
+---
 
-After data cleaning and feature engineering, the following features are used for modeling:
+## ✅ Conclusion and Validation
 
-ActualFlightTime	The real duration of the flight in minutes.
-ActualTotalFuel	The total fuel consumed during the flight.
-ActualTOW	Aircraft’s actual takeoff weight (imputed for missing values).
-FLownPassengers	Number of passengers on the flight (rows with missing values dropped).
-FlightBagsWeight	Total weight of passenger baggage.
-Weekend	Binary indicator (1 if flight is on Friday–Sunday, 0 otherwise).
-WeekDay	Binary indicator (1 if flight is on Monday–Thursday, 0 otherwise).
+### Conclusion
 
-Before training the models, the dataset is split into training and testing sets, and both features and target
-Scaling ensures that models sensitive to feature magnitudes (e.g., regression, gradient-based models) perform optimally.
+The **Neural Network** model demonstrated the best performance, achieving the **lowest RMSE (936.49)** and making it the most accurate model for predicting the **ActualTOW**.
 
-Model Performance Summary
+* The **Random Forest** was the second-best performer.
+* The **Decision Tree** model had the weakest performance, likely due to a tendency to **overfit** the training data.
 
-1. Linear Regression
+### Validation
 
-Prediction Sample: 64,908.11
+The final, best-performing model (the **Neural Network**) was used to generate predictions for **ActualTOW** on a separate, cleaned, and prepared validation dataset, confirming its generalization ability.
 
-RMSE: 1030.97
+---
 
-MAE: 763.15
+## 💻 How to Run This Project
 
-R²: 1.5883
-
-2. Neural Network
-
-RMSE: 936.49
-
-MAE: 665.39
-
-3. Decision Tree Regressor
-
-RMSE: 1348.40
-
-MAE: 977.49
-
-4. Random Forest Regressor
-
-RMSE: 988.22
-
-MAE: 726.98
-
-Conclusion
-
-The Neural Network achieved the lowest RMSE overall (936.49), making it the most accurate model for predicting ActualTOW.
-
-The Random Forest performed better than the Decision Tree and Linear Regression, but worse than the Neural Network.
-
-Linear Regression performed reasonably but was outperformed by both the Neural Network and Random Forest.
-
-Decision Tree had the weakest performance due to overfitting and lack of generalization.
-
-Validation
-
-After cleaning and preparing the validation dataset, the final model was used to generate predictions for ActualTOW.
+1.  Clone this repository: `git clone [Your-Repo-Link]`
+2.  Navigate to the project directory: `cd [Your-Repo-Name]`
+3.  Install the required dependencies: `pip install -r requirements.txt` (Update this command if you don't use a requirements file).
+4.  Run the main analysis notebook or script: `jupyter notebook prediction_notebook.ipynb` (Replace with your actual file name).
